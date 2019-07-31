@@ -1,6 +1,6 @@
-# VAAL (ICCV 2019)
+# VAAL
 
-Original Pytorch implementation of "Variational Adversarial Active Learning". 
+Original Pytorch implementation of "Variational Adversarial Active Learning" (ICCV 2019). 
 
 ### Requirements
 The required Python3 packages can be installed using 
@@ -14,10 +14,12 @@ The code can simply be run using
 ```
 python3 main.py
 ```
-when trying with a different datasets or different variants, the main parameters to tune are
+When using the model with different datasets or different variants, the main hyperparameters to tune are
 ```
 --adversary_param --beta --num_vae_steps and --num_adv_steps
 ```
+
+The results will be saved in `results/accuracies.log`
 
 ### Citation
 
