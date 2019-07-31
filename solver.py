@@ -76,42 +76,66 @@ class Solver:
             optim_task_model.step()
 
             # VAE step
-            recon, z, mu, logvar = vae(labeled_imgs)
-            unsup_loss = self.vae_loss(labeled_imgs, recon, mu, logvar, self.args.beta)
-            unlab_recon, unlab_z, unlab_mu, unlab_logvar = vae(unlabeled_imgs)
-            transductive_loss = self.vae_loss(unlabeled_imgs, 
-                    unlab_recon, unlab_mu, unlab_logvar, self.args.beta)
-        
-            labeled_preds = discriminator(mu)
-            unlabeled_preds = discriminator(unlab_mu)
+            for count in range(self.args.num_vae_steps):
+                recon, z, mu, logvar = vae(labeled_imgs)
+                unsup_loss = self.vae_loss(labeled_imgs, recon, mu, logvar, self.args.beta)
+                unlab_recon, unlab_z, unlab_mu, unlab_logvar = vae(unlabeled_imgs)
+                transductive_loss = self.vae_loss(unlabeled_imgs, 
+                        unlab_recon, unlab_mu, unlab_logvar, self.args.beta)
             
-            lab_real_preds = torch.ones(labeled_imgs.size(0))
-            unlab_real_preds = torch.ones(unlabeled_imgs.size(0))
+                labeled_preds = discriminator(mu)
+                unlabeled_preds = discriminator(unlab_mu)
+                
+                lab_real_preds = torch.ones(labeled_imgs.size(0))
+                unlab_real_preds = torch.ones(unlabeled_imgs.size(0))
 
-            dsc_loss = self.bce_loss(labeled_preds, lab_real_preds) + \
-                    self.bce_loss(unlabeled_preds, unlab_real_preds)
-            total_vae_loss = unsup_loss + transductive_loss + self.args.adversary_param * dsc_loss
-            optim_vae.zero_grad()
-            total_vae_loss.backward()
-            optim_vae.step()
+                dsc_loss = self.bce_loss(labeled_preds, lab_real_preds) + \
+                        self.bce_loss(unlabeled_preds, unlab_real_preds)
+                total_vae_loss = unsup_loss + transductive_loss + self.args.adversary_param * dsc_loss
+                optim_vae.zero_grad()
+                total_vae_loss.backward()
+                optim_vae.step()
+
+                # sample new batch if needed to train the adversarial network
+                if count < (args.num_vae_steps - 1):
+                    labeled_imgs, _ = next(labeled_data)
+                    unlabeled_imgs = next(unlabeled_data)
+
+                    if self.args.cuda:
+                        labeled_imgs = labeled_imgs.cuda()
+                        unlabeled_imgs = unlabeled_imgs.cuda()
+                        labels = labels.cuda()
 
             # Discriminator step
-            with torch.no_grad():
-                _, _, mu, _ = vae(labeled_imgs)
-                _, _, unlab_mu, _ = vae(unlabeled_imgs)
-            
-            labeled_preds = discriminator(mu)
-            unlabeled_preds = discriminator(unlab_mu)
-            
-            lab_real_preds = torch.ones(labeled_imgs.size(0))
-            unlab_fake_preds = torch.zeros(unlabeled_imgs.size(0))
+            for count in range(self.args.num_adv_steps):
+                with torch.no_grad():
+                    _, _, mu, _ = vae(labeled_imgs)
+                    _, _, unlab_mu, _ = vae(unlabeled_imgs)
+                
+                labeled_preds = discriminator(mu)
+                unlabeled_preds = discriminator(unlab_mu)
+                
+                lab_real_preds = torch.ones(labeled_imgs.size(0))
+                unlab_fake_preds = torch.zeros(unlabeled_imgs.size(0))
 
-            dsc_loss = self.bce_loss(labeled_preds, lab_real_preds) + \
-                    self.bce_loss(unlabeled_preds, unlab_fake_preds)
+                dsc_loss = self.bce_loss(labeled_preds, lab_real_preds) + \
+                        self.bce_loss(unlabeled_preds, unlab_fake_preds)
 
-            optim_discriminator.zero_grad()
-            dsc_loss.backward()
-            optim_discriminator.step()
+                optim_discriminator.zero_grad()
+                dsc_loss.backward()
+                optim_discriminator.step()
+
+                # sample new batch if needed to train the adversarial network
+                if count < (args.num_adv_steps - 1):
+                    labeled_imgs, _ = next(labeled_data)
+                    unlabeled_imgs = next(unlabeled_data)
+
+                    if self.args.cuda:
+                        labeled_imgs = labeled_imgs.cuda()
+                        unlabeled_imgs = unlabeled_imgs.cuda()
+                        labels = labels.cuda()
+
+                
 
             if iter_count % 1000 == 0:
                 print('Current training iteration: {}'.format(iter_count))
