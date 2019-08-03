@@ -97,7 +97,7 @@ class Solver:
                 optim_vae.step()
 
                 # sample new batch if needed to train the adversarial network
-                if count < (args.num_vae_steps - 1):
+                if count < (self.args.num_vae_steps - 1):
                     labeled_imgs, _ = next(labeled_data)
                     unlabeled_imgs = next(unlabeled_data)
 
