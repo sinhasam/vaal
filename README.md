@@ -1,6 +1,6 @@
 # VAAL
 
-Original Pytorch implementation of "Variational Adversarial Active Learning" (ICCV 2019). [Link to the paper](https://arxiv.org/abs/1904.00370)
+Original Pytorch implementation of "Variational Adversarial Active Learning" (ICCV 2019). [Link to the paper.](https://arxiv.org/abs/1904.00370)
 
 ### Requirements
 The required Python3 packages can be installed using 
