@@ -2,7 +2,7 @@
 
 Original Pytorch implementation of "Variational Adversarial Active Learning" (ICCV 2019 **Oral**). [Link to the paper.](https://arxiv.org/abs/1904.00370)
 
-Samarth Sinha*, Sayna Ebrahimi*, Trevor Darrell, Internation Conference on Compute Vision (ICCV 2019)
+Samarth Sinha*, Sayna Ebrahimi*, Trevor Darrell, Internation Conference on Computer Vision (ICCV 2019)
 
 *First two authors contributed equally*
 
