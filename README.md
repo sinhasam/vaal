@@ -1,13 +1,36 @@
-# VAAL
+# VAAL in PyTorch
 
-Original Pytorch implementation of "Variational Adversarial Active Learning" (ICCV 2019). [Link to the paper.](https://arxiv.org/abs/1904.00370)
+Original Pytorch implementation of "Variational Adversarial Active Learning" (ICCV 2019 **Oral**). [Link to the paper.](https://arxiv.org/abs/1904.00370)
 
-### Requirements
+Samarth Sinha*, Sayna Ebrahimi*, Trevor Darrell, Internation Conference on Compute Vision (ICCV 2019)
+
+*First two authors contributed equally*
+
+
+## Abstract 
+Active learning aims to develop label-efficient algorithms by sampling the most representative queries to be labeled by an oracle. We describe a pool-based  semi-supervised active learning algorithm that implicitly learns this sampling mechanism in an adversarial manner. Our method learns a latent space using a variational autoencoder (VAE) and an adversarial network trained to discriminate between unlabeled and labeled data. The mini-max game between the VAE and the adversarial network is played such that while the VAE tries to trick the adversarial network into predicting that all data points are from the labeled pool, the adversarial network learns how to discriminate between dissimilarities in the latent space. We extensively evaluate our method on various image classification and semantic segmentation benchmark datasets and establish a new state of the art on $\text{CIFAR10/100}$, $\text{Caltech-256}$, $\text{ImageNet}$, $\text{Cityscapes}$, and $\text{BDD100K}$. Our results  demonstrate that our adversarial approach learns an effective low dimensional latent space in large-scale settings and provides for a computationally efficient sampling method. 
+  
+# Citation
+If using this code, parts of it, or developments from it, please cite our paper:
+```
+@article{sinha2019variational,
+  title={Variational Adversarial Active Learning},
+  author={Sinha, Samarth and Ebrahimi, Sayna and Darrell, Trevor},
+  journal={arXiv preprint arXiv:1904.00370},
+  year={2019}
+}
+```
+
+### Prerequisites:
+- Linux or macOS
+- Python 3.5/3.6
+- CPU compatible but NVIDIA GPU + CUDA CuDNN is highly recommended.
+
+### Installation
 The required Python3 packages can be installed using 
 ```
 pip3 install -r requirements.txt
 ```
-The code was tested for Python 3.5 and 3.6. The code is compatible with either GPU or CPU, but GPU is highly recommended. 
 
 ### Experiments
 The code can simply be run using 
@@ -21,16 +44,10 @@ When using the model with different datasets or different variants, the main hyp
 
 The results will be saved in `results/accuracies.log`
 
-### Citation
 
-If you find this work useful, consider citing our work:
-```
-@article{sinha2019variational,
-  title={Variational Adversarial Active Learning},
-  author={Sinha, Samarth and Ebrahimi, Sayna and Darrell, Trevor},
-  journal={arXiv preprint arXiv:1904.00370},
-  year={2019}
-}
-```
+## License
+The entire codebase is under BSD 2-Clause License.
+
+
 # Contact
 If there are any questions or concerns feel free to send a message at samarth.sinha@mail.utoronto.ca
