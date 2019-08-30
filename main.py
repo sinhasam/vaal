@@ -32,6 +32,7 @@ def main(args):
 
         args.num_images = 50000
         args.budget = 2500
+        args.initial_budget = 5000
         args.num_classes = 10
     elif args.dataset == 'cifar100':
         test_dataloader = data.DataLoader(
@@ -42,6 +43,7 @@ def main(args):
 
         args.num_images = 50000
         args.budget = 2500
+        args.initial_budget = 5000
         args.num_classes = 100
 
     elif args.dataset == 'imagenet':
@@ -53,12 +55,13 @@ def main(args):
 
         args.num_images = 1281167
         args.budget = 64060
+        args.initial_budget = 128120
         args.num_classes = 1000
     else:
         raise NotImplementedError
 
     all_indices = set(np.arange(args.num_images))
-    initial_indices = random.sample(all_indices, args.budget)
+    initial_indices = random.sample(all_indices, args.initial_budget)
     sampler = data.sampler.SubsetRandomSampler(initial_indices)
 
     # dataset with labels available
