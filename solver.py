@@ -157,6 +157,7 @@ class Solver:
                 
 
     def test(self, task_model):
+        task_model.eval()
         total, correct = 0, 0
         for imgs, labels in self.test_dataloader:
             if self.args.cuda:
