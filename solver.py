@@ -88,6 +88,10 @@ class Solver:
                 
                 lab_real_preds = torch.ones(labeled_imgs.size(0))
                 unlab_real_preds = torch.ones(unlabeled_imgs.size(0))
+                    
+                if self.args.cuda:
+                    lab_real_preds = lab_real_preds.cuda()
+                    unlab_real_preds = unlab_real_preds.cuda()
 
                 dsc_loss = self.bce_loss(labeled_preds, lab_real_preds) + \
                         self.bce_loss(unlabeled_preds, unlab_real_preds)
@@ -118,6 +122,10 @@ class Solver:
                 lab_real_preds = torch.ones(labeled_imgs.size(0))
                 unlab_fake_preds = torch.zeros(unlabeled_imgs.size(0))
 
+                if self.args.cuda:
+                    lab_real_preds = lab_real_preds.cuda()
+                    unlab_fake_preds = unlab_fake_preds.cuda()
+                
                 dsc_loss = self.bce_loss(labeled_preds, lab_real_preds) + \
                         self.bce_loss(unlabeled_preds, unlab_fake_preds)
 
