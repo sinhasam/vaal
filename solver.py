@@ -47,6 +47,11 @@ class Solver:
         discriminator.train()
         task_model.train()
 
+        if self.args.cuda:
+            vae = vae.cuda()
+            discriminator = discriminator.cuda()
+            task_model = task_model.cuda()
+        
         change_lr_iter = self.args.train_iterations // 25
 
         for iter_count in range(self.args.train_iterations):
