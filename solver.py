@@ -88,8 +88,9 @@ class Solver:
                 transductive_loss = self.vae_loss(unlabeled_imgs, 
                         unlab_recon, unlab_mu, unlab_logvar, self.args.beta)
             
-                labeled_preds = discriminator(mu)
-                unlabeled_preds = discriminator(unlab_mu)
+                labeled_preds = discriminator(mu).view(-1)
+                unlabeled_preds = discriminator(unlab_mu).view(-1)
+
                 
                 lab_real_preds = torch.ones(labeled_imgs.size(0))
                 unlab_real_preds = torch.ones(unlabeled_imgs.size(0))
@@ -121,8 +122,9 @@ class Solver:
                     _, _, mu, _ = vae(labeled_imgs)
                     _, _, unlab_mu, _ = vae(unlabeled_imgs)
                 
-                labeled_preds = discriminator(mu)
-                unlabeled_preds = discriminator(unlab_mu)
+                labeled_preds = discriminator(mu).view(-1)
+                unlabeled_preds = discriminator(unlab_mu).view(-1)
+
                 
                 lab_real_preds = torch.ones(labeled_imgs.size(0))
                 unlab_fake_preds = torch.zeros(unlabeled_imgs.size(0))
