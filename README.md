@@ -33,7 +33,7 @@ The required Python3 packages can be installed using
 pip3 install -r requirements.txt
 ```
 
-### Experiments
+### Experiments and Visualization
 The code can simply be run using 
 ```
 python3 main.py
@@ -43,7 +43,9 @@ When using the model with different datasets or different variants, the main hyp
 --adversary_param --beta --num_vae_steps and --num_adv_steps
 ```
 
-The results will be saved in `results/accuracies.log`. We have provided the code and data required to replicate all plots in paper [here](https://github.com/sinhasam/vaal/blob/master/plots/plots.ipynb).
+The results will be saved in `results/accuracies.log`. 
+
+**We have provided the code and data required to replicate all plots in paper [here](https://github.com/sinhasam/vaal/blob/master/plots/plots.ipynb).**
 
 
 ### License
