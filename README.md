@@ -1,5 +1,7 @@
 # VAAL in PyTorch
 
+**Update**: For any questions, please email me at samarth.sinha@mail.utoronto.ca, since I often don't get GitHub emails. 
+
 Original Pytorch implementation of "Variational Adversarial Active Learning" (ICCV 2019 **Oral**). [Link to the paper.](https://arxiv.org/abs/1904.00370)
 
 Samarth Sinha*, Sayna Ebrahimi*, Trevor Darrell, Internation Conference on Computer Vision (ICCV 2019)
