@@ -36,6 +36,7 @@ class Solver:
 
 
     def train(self, querry_dataloader, task_model, vae, discriminator, unlabeled_dataloader):
+        self.args.train_iterations = len(querry_dataloader) * self.args.train_epochs
         labeled_data = self.read_data(querry_dataloader)
         unlabeled_data = self.read_data(unlabeled_dataloader, labels=False)
 
