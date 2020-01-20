@@ -36,7 +36,7 @@ class Solver:
 
 
     def train(self, querry_dataloader, task_model, vae, discriminator, unlabeled_dataloader):
-        self.args.train_iterations = len(querry_dataloader) * self.args.train_epochs
+        self.args.train_iterations = (self.args.num_images * self.args.train_epochs) // self.args.batch_size
         labeled_data = self.read_data(querry_dataloader)
         unlabeled_data = self.read_data(unlabeled_dataloader, labels=False)
 
@@ -53,19 +53,7 @@ class Solver:
             discriminator = discriminator.cuda()
             task_model = task_model.cuda()
         
-        change_lr_iter = self.args.train_iterations // 25
-
         for iter_count in range(self.args.train_iterations):
-            if iter_count is not 0 and iter_count % change_lr_iter == 0:
-                for param in optim_vae.param_groups:
-                    param['lr'] = param['lr'] * 0.9
-    
-                for param in optim_task_model.param_groups:
-                    param['lr'] = param['lr'] * 0.9 
-
-                for param in optim_discriminator.param_groups:
-                    param['lr'] = param['lr'] * 0.9 
-
             labeled_imgs, labels = next(labeled_data)
             unlabeled_imgs = next(unlabeled_data)
 
@@ -151,7 +139,7 @@ class Solver:
 
                 
 
-            if iter_count % 1000 == 0:
+            if iter_count % 1 == 0:
                 print('Current training iteration: {}'.format(iter_count))
                 print('Current task model loss: {:.4f}'.format(task_loss.item()))
                 print('Current vae model loss: {:.4f}'.format(total_vae_loss.item()))
