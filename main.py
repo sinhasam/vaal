@@ -18,8 +18,9 @@ import arguments
 
 def cifar_transformer():
     return transforms.Compose([
-            transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
+            transforms.Normalize(mean=[0.5, 0.5, 0.5,],
+                                std=[0.5, 0.5, 0.5]),
         ])
 
 def main(args):
