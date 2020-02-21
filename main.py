@@ -32,6 +32,7 @@ def main(args):
         train_dataset = CIFAR10(args.data_path)
 
         args.num_images = 50000
+        args.num_val = 5000
         args.budget = 2500
         args.initial_budget = 5000
         args.num_classes = 10
@@ -42,6 +43,7 @@ def main(args):
 
         train_dataset = CIFAR100(args.data_path)
 
+        args.num_val = 5000
         args.num_images = 50000
         args.budget = 2500
         args.initial_budget = 5000
@@ -54,6 +56,7 @@ def main(args):
 
         train_dataset = ImageNet(args.data_path)
 
+        args.num_val = 128120
         args.num_images = 1281167
         args.budget = 64060
         args.initial_budget = 128120
@@ -62,12 +65,18 @@ def main(args):
         raise NotImplementedError
 
     all_indices = set(np.arange(args.num_images))
-    initial_indices = random.sample(all_indices, args.initial_budget)
+    val_indices = random.sample(all_indices, args.num_val)
+    all_indices = np.setdiff1d(list(all_indices), val_indices)
+
+    initial_indices = random.sample(list(all_indices), args.initial_budget)
     sampler = data.sampler.SubsetRandomSampler(initial_indices)
+    val_sampler = data.sampler.SubsetRandomSampler(val_indices)
 
     # dataset with labels available
     querry_dataloader = data.DataLoader(train_dataset, sampler=sampler, 
             batch_size=args.batch_size, drop_last=True)
+    val_dataloader = data.DataLoader(train_dataset, sampler=val_sampler,
+            batch_size=args.batch_size, drop_last=False)
             
     args.cuda = args.cuda and torch.cuda.is_available()
     solver = Solver(args, test_dataloader)
@@ -92,6 +101,7 @@ def main(args):
 
         # train the models on the current data
         acc, vae, discriminator = solver.train(querry_dataloader,
+                                               val_dataloader,
                                                task_model, 
                                                vae, 
                                                discriminator,

@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 
 import sampler
+import copy
 
 
 
@@ -35,14 +36,16 @@ class Solver:
                     yield img
 
 
-    def train(self, querry_dataloader, task_model, vae, discriminator, unlabeled_dataloader):
+    def train(self, querry_dataloader, val_dataloader, task_model, vae, discriminator, unlabeled_dataloader):
         self.args.train_iterations = (self.args.num_images * self.args.train_epochs) // self.args.batch_size
+        lr_change = self.args.train_iterations // 4
         labeled_data = self.read_data(querry_dataloader)
         unlabeled_data = self.read_data(unlabeled_dataloader, labels=False)
 
         optim_vae = optim.Adam(vae.parameters(), lr=5e-4)
-        optim_task_model = optim.Adam(task_model.parameters(), lr=5e-4)
+        optim_task_model = optim.SGD(task_model.parameters(), lr=0.01, weight_decay=5e-4, momentum=0.9)
         optim_discriminator = optim.Adam(discriminator.parameters(), lr=5e-4)
+
 
         vae.train()
         discriminator.train()
@@ -53,7 +56,11 @@ class Solver:
             discriminator = discriminator.cuda()
             task_model = task_model.cuda()
         
+        best_acc = 0
         for iter_count in range(self.args.train_iterations):
+            if iter_count is not 0 and iter_count % lr_change == 0:
+                for param in optim_task_model.param_groups:
+                    param['lr'] = param['lr'] / 10
             labeled_imgs, labels = next(labeled_data)
             unlabeled_imgs = next(unlabeled_data)
 
@@ -139,13 +146,26 @@ class Solver:
 
                 
 
-            if iter_count % 1 == 0:
+            if iter_count % 100 == 0:
                 print('Current training iteration: {}'.format(iter_count))
                 print('Current task model loss: {:.4f}'.format(task_loss.item()))
                 print('Current vae model loss: {:.4f}'.format(total_vae_loss.item()))
                 print('Current discriminator model loss: {:.4f}'.format(dsc_loss.item()))
 
-        final_accuracy = self.test(task_model)
+            if iter_count % 1000 == 0:
+                acc = self.validate(task_model, val_dataloader)
+                if acc > best_acc:
+                    best_acc = acc
+                    best_model = copy.deepcopy(task_model)
+                
+                print('current step: {} acc: {}'.format(iter_count, acc))
+                print('best acc: ', best_acc)
+
+
+        if self.args.cuda:
+            best_model = best_model.cuda()
+
+        final_accuracy = self.test(best_model)
         return final_accuracy, vae, discriminator
 
 
@@ -157,6 +177,21 @@ class Solver:
 
         return querry_indices
                 
+
+    def validate(self, task_model, loader):
+        task_model.eval()
+        total, correct = 0, 0
+        for imgs, labels, _ in loader:
+            if self.args.cuda:
+                imgs = imgs.cuda()
+
+            with torch.no_grad():
+                preds = task_model(imgs)
+
+            preds = torch.argmax(preds, dim=1).cpu().numpy()
+            correct += accuracy_score(labels, preds, normalize=False)
+            total += imgs.size(0)
+        return correct / total * 100
 
     def test(self, task_model):
         task_model.eval()
