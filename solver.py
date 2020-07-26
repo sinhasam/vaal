@@ -43,7 +43,7 @@ class Solver:
         unlabeled_data = self.read_data(unlabeled_dataloader, labels=False)
 
         optim_vae = optim.Adam(vae.parameters(), lr=5e-4)
-        optim_task_model = optim.SGD(task_model.parameters(), lr=0.01, weight_decay=5e-4, momentum=0.9)
+        optim_task_model = optim.SGD(task_model.parameters(), lr=5e-4, weight_decay=5e-4, momentum=0.9)
         optim_discriminator = optim.Adam(discriminator.parameters(), lr=5e-4)
 
 
@@ -87,8 +87,8 @@ class Solver:
                 labeled_preds = discriminator(mu)
                 unlabeled_preds = discriminator(unlab_mu)
                 
-                lab_real_preds = torch.ones(labeled_imgs.size(0))
-                unlab_real_preds = torch.ones(unlabeled_imgs.size(0))
+                lab_real_preds = torch.ones(labeled_imgs.size(0), 1)
+                unlab_real_preds = torch.ones(unlabeled_imgs.size(0), 1)
                     
                 if self.args.cuda:
                     lab_real_preds = lab_real_preds.cuda()
