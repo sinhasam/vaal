@@ -120,8 +120,8 @@ class Solver:
                 labeled_preds = discriminator(mu)
                 unlabeled_preds = discriminator(unlab_mu)
                 
-                lab_real_preds = torch.ones(labeled_imgs.size(0))
-                unlab_fake_preds = torch.zeros(unlabeled_imgs.size(0))
+                lab_real_preds = torch.ones(labeled_imgs.size(0), 1)
+                unlab_fake_preds = torch.zeros(unlabeled_imgs.size(0), 1)
 
                 if self.args.cuda:
                     lab_real_preds = lab_real_preds.cuda()
