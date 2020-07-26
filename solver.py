@@ -42,9 +42,9 @@ class Solver:
         labeled_data = self.read_data(querry_dataloader)
         unlabeled_data = self.read_data(unlabeled_dataloader, labels=False)
 
-        optim_vae = optim.Adam(vae.parameters(), lr=5e-4)
-        optim_task_model = optim.SGD(task_model.parameters(), lr=5e-4, weight_decay=5e-4, momentum=0.9)
-        optim_discriminator = optim.Adam(discriminator.parameters(), lr=5e-4)
+        optim_vae = optim.Adam(vae.parameters(), lr=self.args.lr_vae)
+        optim_task_model = optim.SGD(task_model.parameters(), lr=self.args.lr_task, weight_decay=5e-4, momentum=0.9)
+        optim_discriminator = optim.Adam(discriminator.parameters(), lr=self.args.lr_dis)
 
 
         vae.train()
