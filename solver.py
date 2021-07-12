@@ -88,7 +88,7 @@ class Solver:
                 unlabeled_preds = discriminator(unlab_mu)
                 
                 lab_real_preds = torch.ones(labeled_imgs.size(0))
-                unlab_real_preds = torch.ones(unlabeled_imgs.size(0))
+                unlab_real_preds = torch.zeros(unlabeled_imgs.size(0))
                     
                 if self.args.cuda:
                     lab_real_preds = lab_real_preds.cuda()
